@@ -1,0 +1,39 @@
+# Weftday
+
+> Weftday is a free, open-source web app that puts a person's calendar, a meeting recorder and their meeting notes in one place. It runs entirely in the browser. There is no Weftday server.
+
+Weftday is made by CRCKD (https://www.crckd.live). The code is public under the GNU AGPL-3.0 licence.
+
+## What it does
+
+- Shows every Google calendar and task a person has, from several Google accounts, in one calendar. A Microsoft Teams or Outlook calendar can be added through a small helper.
+- Records meetings, the screen, the camera or the voice, in the browser. No bot joins the call.
+- Writes notes from the recording: a summary, the decisions, the person's own action points, what others owe, and open questions, with who said what.
+- Answers questions from saved notes ("Ask my meetings").
+- Turns action points into tasks, and fits tasks into the gaps between meetings ("Plan my day").
+- Keeps a page for each person and company met, and prepares a brief before a meeting.
+- Makes a share link for a recording through the person's own Google Drive.
+
+## What it is not
+
+- Not a hosted service: there are no Weftday accounts, plans or servers, and nothing is paid.
+- Not a meeting bot: it does not join calls or send invitations.
+- Not a native app yet: it lives in a browser tab. Recording a call needs Chrome or Edge on a computer. A phone can record the voice or camera, not a call.
+- Connecting Google currently needs a one-time setup of about ten minutes; a one-press sign-in is being arranged with Google.
+
+## Privacy model
+
+- Calendar data goes directly between the person's browser and Google.
+- Recordings and notes are stored in the browser on the person's device. Tasks and notes can also be kept in a calendar in the person's own Google account.
+- AI features use an API key the person gets themselves (Google's is free). Sound and notes are sent to that AI service only when the person presses a button or switches on a setting that says so.
+- No analytics, no tracking, no advertising.
+
+## Links
+
+- Website: https://weftday.crckd.live/
+- The app: https://app.weftday.crckd.live/
+- The app with sample data: https://app.weftday.crckd.live/?demo
+- Guide: https://app.weftday.crckd.live/guide.html
+- Privacy policy: https://app.weftday.crckd.live/privacy.html
+- Terms of use: https://app.weftday.crckd.live/terms.html
+- Source code: https://github.com/crckdteam/weftday

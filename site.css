@@ -1,0 +1,262 @@
+/* The Weftday website. A card file: a deep green box, cream index cards, a coloured tab on each. */
+@font-face { font-family: Figtree; src: url(fonts/figtree.woff2) format('woff2'); font-weight: 300 900; font-display: swap; }
+@font-face { font-family: 'Bricolage Grotesque'; src: url(fonts/bricolage.woff2) format('woff2'); font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; }
+
+:root {
+  --box: #0f3d2e; --box2: #0b3125; --on-box: #f1f6ee; --on-box-soft: #b9cdbf;
+  --card: #fbfcf8; --ink: #17201b; --soft: #55635a; --rule: #dfe6da; --pale: #e3eadd;
+  --record: #f0624b; --notes: #1f8a67; --calendar: #3b6cf0; --people: #8361ea; --yours: #e3a52a; --open: #f1f6ee;
+  --ui: Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --display: 'Bricolage Grotesque', Figtree, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "Roboto Mono", "Droid Sans Mono", Consolas, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  /* one column for the whole page: the bar, the words on the box, the cards and the foot share its edges */
+  --col: 1240px; --gut: clamp(16px, 4vw, 40px); --edge: max(var(--gut), calc(50% - var(--col) / 2));
+  --cardpad: clamp(20px, 4.6vw, 64px);
+  --bar: 68px;    /* the top bar */
+  --stuck: 68px;  /* how much of it stays on screen while the page scrolls */
+  /* the tabs standing on the cards: six in a row, the same on every screen */
+  --tab-w: clamp(36px, 11vw, 92px); --tab-gap: clamp(8px, 1.4vw, 16px); --tab-x0: clamp(14px, 3.4vw, 44px); --tab-h: clamp(28px, 3.6vw, 34px);
+  /* the cloth lining of the box: two faint sets of threads crossing */
+  --weave: repeating-linear-gradient(0deg, rgba(255, 255, 255, .028) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, rgba(0, 0, 0, .05) 0 1px, transparent 1px 5px);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--stuck) + var(--tab-h) + 18px); -webkit-text-size-adjust: 100%; scrollbar-color: #3f6f5c var(--box2); overflow-x: clip; }
+body { margin: 0; color: var(--on-box); font: 18px/1.55 var(--ui); -webkit-font-smoothing: antialiased; background: var(--weave), var(--box); overflow-x: clip; }
+::selection { background: var(--yours); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--yours); outline-offset: 3px; border-radius: 6px; }
+.card:not(.dark) :focus-visible { outline-color: var(--ink); }
+a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; -webkit-tap-highlight-color: rgba(255, 255, 255, .12); }
+img, video, svg { display: block; max-width: 100%; }
+h1, h2, h3, p, ul, figure, pre { margin: 0; }
+ul { padding: 0; list-style: none; }
+[hidden] { display: none !important; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.nb { white-space: nowrap; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--card); color: var(--ink); padding: 8px 14px; border-radius: 10px; z-index: 50; }
+.skip:focus { left: 8px; }
+
+/* ---- the top: the mark, the tabs, the way in */
+.top { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px; min-height: var(--bar); padding-inline: var(--edge); background: var(--weave), var(--box); box-shadow: 0 1px 0 rgba(255, 255, 255, .08), 0 12px 24px -18px rgba(0, 0, 0, .7); }
+.mark { justify-self: start; display: flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; font: 700 22px/1 var(--display); letter-spacing: -.02em; }
+.tabs { display: flex; gap: 2px; }
+.tabs a { position: relative; display: flex; align-items: center; height: 44px; padding: 0 13px; border-radius: 10px 10px 4px 4px; text-decoration: none; white-space: nowrap; font-weight: 600; font-size: 15px; color: var(--on-box-soft); transition: color .2s var(--ease), background-color .2s var(--ease); }
+.tabs a::before { content: ""; position: absolute; left: 13px; right: 13px; top: 0; height: 3px; border-radius: 0 0 3px 3px; background: var(--h); transform: scaleX(.35); transform-origin: left; opacity: .85; transition: transform .3s var(--ease); }
+.tabs a.on { color: var(--on-box); background: rgba(255, 255, 255, .08); }
+.tabs a.on::before { transform: scaleX(1); opacity: 1; }
+[data-tab=record] { --h: var(--record); } [data-tab=notes] { --h: var(--notes); } [data-tab=calendar] { --h: var(--calendar); }
+[data-tab=people] { --h: var(--people); } [data-tab=yours] { --h: var(--yours); } [data-tab=open] { --h: var(--open); }
+.topact { grid-column: -2; justify-self: end; display: flex; align-items: center; gap: 6px; }
+.ghub { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 44px; height: 44px; padding: 0 10px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 15px; color: var(--on-box-soft); transition: color .2s var(--ease); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 19px; border-radius: 999px; font: 650 15.5px/1 var(--ui); text-decoration: none; white-space: nowrap; border: 1.5px solid transparent; transition: transform .18s var(--ease), background-color .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease), color .18s var(--ease); }
+.btn.big { height: 54px; padding: 0 26px; font-size: 17.5px; }
+.btn.solid { background: var(--on-box); color: var(--box2); box-shadow: 0 6px 20px -8px rgba(0, 0, 0, .5); }
+.btn.line { border-color: rgba(241, 246, 238, .42); color: var(--on-box); }
+.btn.ink { background: var(--ink); color: var(--card); }
+.btn.quiet { border-color: #c9d3c3; color: var(--ink); }
+.btn:active { transform: translateY(0) scale(.98); }
+
+/* ---- the label on the front of the drawer */
+.hero { display: grid; gap: clamp(22px, 3vw, 48px); padding: clamp(36px, 6.5vw, 84px) var(--edge) clamp(34px, 5vw, 60px); }
+.hero h1 { font: 700 clamp(40px, 11.6vw, 84px)/.96 var(--display); letter-spacing: -.03em; }
+.lede { max-width: 31em; font-size: clamp(18.5px, 1.5vw, 21px); line-height: 1.45; color: var(--on-box-soft); text-wrap: pretty; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(22px, 2.4vw, 30px); }
+.fine { margin-top: 16px; max-width: 34em; font-size: 15px; line-height: 1.45; color: var(--on-box-soft); text-wrap: pretty; }
+
+/* ---- the drawer of cards */
+.drawer { padding-inline: var(--edge); }
+.card { position: relative; background: var(--card); color: var(--ink); border-radius: 26px; padding: var(--cardpad); margin-top: calc(var(--tab-h) + 30px); box-shadow: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 30px 60px -30px rgba(0, 0, 0, .55); }
+/* the tab: part of the card, standing above its top edge. Each card's tab keeps its own place in the row of six. */
+.card .tab, .dividers a { position: absolute; left: calc(var(--tab-x0) + var(--i) * (var(--tab-w) + var(--tab-gap))); width: var(--tab-w); display: grid; place-items: center; border-radius: 13px 13px 0 0; background: var(--h); color: #fff; }
+.card .tab { top: calc(-1 * var(--tab-h)); height: calc(var(--tab-h) + 2px); }
+.card .tab svg, .dividers svg { width: 18px; height: 18px; }
+.t-record { --h: var(--record); --mark: var(--record); --i: 0; } .t-notes { --h: var(--notes); --mark: var(--notes); --i: 1; } .t-calendar { --h: var(--calendar); --mark: var(--calendar); --i: 2; }
+.t-people { --h: var(--people); --mark: var(--people); --i: 3; } .t-yours { --h: var(--yours); --mark: var(--yours); --i: 4; } .t-open { --h: var(--open); --mark: var(--ink); --i: 5; }
+.card .tab.t-yours, .card.t-yours .tab, .card.t-open .tab, .dividers .t-yours, .dividers .t-open { color: var(--ink); }
+
+/* the first card, and the last: all six tabs stand on it, and each one leads to its card */
+.card.first { margin-top: calc(var(--tab-h) + 6px); padding: clamp(8px, 1.1vw, 14px); }
+.dividers { position: absolute; left: 0; right: 0; top: calc(-1 * var(--tab-h) + 2px); height: calc(var(--tab-h) - 2px); }
+.dividers a { top: 0; height: 100%; transition: filter .2s var(--ease); }
+.dividers a::after { content: ""; position: absolute; inset: -18px calc(var(--tab-gap) / -2) 0; }   /* a larger place to press */
+.dividers svg { transition: transform .25s var(--ease); }
+.first .dividers a { transform-origin: bottom; animation: rise .9s var(--ease) backwards; animation-delay: calc(var(--i) * 70ms); }
+@keyframes rise { from { transform: translateY(100%); } }
+/* the clip's place is kept at the shape of the clip (wide, or upright on a phone: the same width as the rule beside
+   the phone cut in the page), so nothing moves when the still or the clip arrives; the box's green shows behind them */
+.frame { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border-radius: clamp(13px, 1.4vw, 16px); background: var(--weave), var(--box); }
+.frame img, .frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.screen figcaption { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; margin-top: clamp(8px, 1.1vw, 14px); padding-left: clamp(8px, 1.2vw, 16px); font-size: 15px; line-height: 1.35; color: var(--soft); }
+.vbtn { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 0; cursor: pointer; background: var(--box); color: var(--on-box); transition: transform .18s var(--ease), background-color .18s var(--ease); }
+.vbtn:active { transform: scale(.94); }
+.vbtn .play, .vbtn[aria-pressed=false] .pause { display: none; }
+.vbtn[aria-pressed=false] .play { display: block; }
+
+.split { display: grid; gap: clamp(26px, 4.5vw, 64px); align-items: center; }
+.say h2, .faq h2 { font: 700 clamp(30px, 3.1vw, 44px)/1.04 var(--display); letter-spacing: -.03em; text-wrap: balance; }
+.say p { margin-top: 18px; font-size: clamp(17px, 1.4vw, 19px); color: var(--soft); max-width: 34em; text-wrap: pretty; }
+.lines { margin-top: 24px; border-top: 1px solid var(--rule); }
+.lines li { position: relative; padding: 13px 0 13px 26px; border-bottom: 1px solid var(--rule); font-size: 16.5px; line-height: 1.45; text-wrap: pretty; }
+.lines li::before { content: ""; position: absolute; left: 2px; top: 23px; width: 12px; height: 2.5px; border-radius: 2px; background: var(--mark, var(--ink)); }
+.lines.tight li { padding: 10px 0 10px 26px; font-size: 15.5px; }
+.lines.tight li::before { top: 20px; }
+
+/* a picture of one part of the app, at the size it is read, set on the app's own pale green */
+.shot { display: grid; place-items: center; padding: clamp(14px, 2.6vw, 36px); border-radius: 20px; background: var(--pale); }
+.shot img { width: 100%; max-width: var(--w); height: auto; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px rgba(23, 40, 30, .09), 0 24px 46px -22px rgba(23, 40, 30, .5); }
+.s-record { --w: 470px; } .s-notes, .s-people { --w: 480px; } .s-calendar { --w: 478px; }
+
+.card.dark { background: #14251d; color: var(--on-box); box-shadow: 0 0 0 1px rgba(255, 255, 255, .06) inset, 0 30px 60px -30px rgba(0, 0, 0, .55); }
+.card.dark .say p { color: var(--on-box-soft); }
+.card.dark .lines, .card.dark .lines li { border-color: rgba(255, 255, 255, .13); }
+.map svg { width: 100%; max-width: 520px; height: auto; margin-inline: auto; }
+.map .small { display: none; }
+.map .wire { fill: none; stroke: var(--yours); stroke-width: 2; stroke-dasharray: 5 7; stroke-linecap: round; animation: flow 1.6s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -24; } }
+.map .node rect { fill: #1d3329; stroke: rgba(255, 255, 255, .2); }
+.map .node.you rect { fill: var(--yours); stroke: none; }
+.map text { font: 650 15px var(--ui); fill: var(--on-box); text-anchor: middle; }
+.map .sub { font: 500 12px var(--ui); fill: var(--on-box-soft); }
+.map .small text { font-size: 16px; } .map .small .sub { font-size: 13.5px; }
+.map .you text { fill: var(--ink); } .map .you .sub { fill: #4d3a08; }
+.map figcaption { margin-top: 14px; text-align: center; font-size: 15px; color: var(--on-box-soft); text-wrap: balance; }
+
+.code pre { padding: 18px 20px; border-radius: 16px; background: var(--ink); color: #e9f0e6; font: 500 clamp(13px, 1.15vw, 15px)/1.75 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.code code { font: inherit; }
+.code .cmd { display: block; padding-left: 1.3em; text-indent: -1.3em; }
+.code .cmd::before { content: "$ "; color: #8fa596; }
+.code p { margin-top: 12px; font-size: 15.5px; color: var(--soft); }
+.code h3 { margin-top: 30px; font: 700 20px/1.2 var(--display); letter-spacing: -.02em; }
+.code .lines { margin-top: 12px; }
+.cta.small { margin-top: 26px; }
+
+/* ---- questions, on the box itself */
+.faq { display: grid; gap: clamp(22px, 3vw, 40px); padding: clamp(72px, 9vw, 124px) var(--edge) 0; }
+.qs { border-top: 1px solid rgba(255, 255, 255, .16); }
+.qs details { border-bottom: 1px solid rgba(255, 255, 255, .16); }
+.qs summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 16px 2px; cursor: pointer; list-style: none; font-weight: 650; font-size: 19px; line-height: 1.3; transition: color .2s var(--ease); }
+.qs summary::-webkit-details-marker { display: none; }
+.qs summary::after { content: ""; flex: none; width: 10px; height: 10px; margin-right: 8px; border-right: 2px solid var(--on-box-soft); border-bottom: 2px solid var(--on-box-soft); transform: translateY(-3px) rotate(45deg); transition: transform .25s var(--ease); }
+.qs details[open] summary::after { transform: translateY(3px) rotate(225deg); }
+.qs p { padding: 0 2px 22px; max-width: 40em; color: var(--on-box-soft); font-size: 17px; text-wrap: pretty; }
+.qs p a, .fmark a { padding-block: 13px; }   /* a link inside a sentence still gets a finger's height */
+
+/* ---- the last card: the way in, once more */
+.card.last { margin-top: clamp(96px, 11vw, 150px); padding-block: clamp(34px, 6vw, 84px); }
+.end { display: grid; gap: clamp(24px, 3vw, 40px); }
+.end h2 { font: 700 clamp(40px, 6.4vw, 84px)/.98 var(--display); letter-spacing: -.03em; text-wrap: balance; }
+.end .line { margin-top: clamp(12px, 1.4vw, 18px); font-size: clamp(18px, 1.5vw, 21px); color: var(--soft); text-wrap: pretty; }
+.end .cta { margin-top: 0; }
+.end .fine { color: var(--soft); }
+
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 18px; margin-top: clamp(56px, 7vw, 96px); padding: 18px var(--edge) calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(255, 255, 255, .14); font-size: 15px; color: var(--on-box-soft); }
+.fmark { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.fmark b { font: 700 19px var(--display); color: var(--on-box); letter-spacing: -.02em; }
+.foot nav { display: flex; flex-wrap: wrap; margin-inline: -11px; }
+.foot nav a { display: flex; align-items: center; min-height: 44px; padding: 0 11px; text-decoration: none; transition: color .2s var(--ease); }
+
+/* ---- the page that says a page is missing */
+.lost { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+.lost main { flex: 1; display: grid; align-content: center; padding-block: clamp(28px, 6vh, 72px); }
+.lost .card.first { padding: var(--cardpad); padding-block: clamp(30px, 6vw, 76px); }
+.lost .end h1 { font: 700 clamp(38px, 6vw, 76px)/.98 var(--display); letter-spacing: -.03em; text-wrap: balance; }
+.lost .foot { margin-top: 0; }
+
+/* ---- what a mouse can do and a finger cannot */
+@media (hover: hover) {
+  .tabs a:hover { color: var(--on-box); }
+  .tabs a:hover::before { transform: scaleX(1); }
+  .ghub:hover, .foot a:hover { color: var(--on-box); }
+  .btn.solid:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -10px rgba(0, 0, 0, .6); }
+  .btn.line:hover { border-color: var(--on-box); background: rgba(255, 255, 255, .06); }
+  .btn.ink:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -10px rgba(23, 32, 27, .55); }
+  .btn.quiet:hover { border-color: var(--ink); }
+  .dividers a:hover { filter: brightness(1.08); }
+  .dividers a:hover svg { transform: translateY(-2px); }
+  .vbtn:hover { transform: scale(1.06); background: var(--box2); }
+  .qs summary:hover { color: #fff; }
+}
+
+/* ---- room to sit side by side */
+@media (min-width: 1000px) {
+  .split { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+  .split.flip { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  .split.flip .say { order: 2; }
+  .t-open .split { align-items: start; }
+  .faq { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); align-items: start; }
+  .faq h2 { padding-top: 14px; }
+  .end { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .end .go { max-width: 27em; padding-bottom: 6px; }
+}
+@media (min-width: 1120px) {
+  .hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; }
+  .hero h1 { font-size: clamp(64px, 6.6vw, 96px); }
+  .pitch { padding-bottom: 8px; }
+}
+@media (min-width: 1000px) and (max-width: 1179px) {
+  .ghub span { display: none; }
+  .shot { padding: 16px; }
+  .cta.small .btn { padding: 0 16px; }
+}
+
+/* ---- narrower: the tabs become a row of their own under the bar, and it is that row which stays while the page scrolls */
+@media (max-width: 999px) {
+  :root { --bar: 58px; --stuck: 48px; }
+  .top { grid-template-columns: 1fr auto; padding-inline: 0; top: calc(-1 * var(--bar)); }
+  .lost .top { position: static; }
+  .mark { height: var(--bar); margin-left: var(--gut); }
+  .topact { height: var(--bar); margin-right: var(--gut); }
+  .ghub span { display: none; }
+  .tabs { grid-column: 1 / -1; grid-row: 2; height: 48px; gap: 0; padding-inline: calc(var(--gut) - 12px) var(--gut); border-top: 1px solid rgba(255, 255, 255, .1); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs a { flex: none; height: 100%; padding: 0 12px; border-radius: 0 0 9px 9px; }
+  .tabs a::before { left: 12px; right: 12px; }
+  .say h2 { font-size: clamp(27px, 5.6vw, 40px); }
+  .say p, .lines { max-width: 38em; }
+}
+@media (max-width: 600px) {
+  body { font-size: 17px; }
+  .card { border-radius: 20px; }
+  .frame { aspect-ratio: 4 / 5; }
+  .tabs { padding-right: 36px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); }
+  .screen figcaption { font-size: 14px; }
+  /* the pictures here are the app on a phone; they reach nearly to the edges of the card so the words in them stay large */
+  .shot { margin-inline: calc(10px - var(--cardpad)); padding: 12px 10px; border-radius: 14px; }
+  .shot img { border-radius: 16px; }
+  .s-record, .s-notes, .s-people { --w: 356px; } .s-calendar { --w: 390px; }
+  .map .wide { display: none; } .map .small { display: block; max-width: 380px; }
+  .qs summary { font-size: 18px; }
+  .foot { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 560px) {
+  .btn.big, .cta.small .btn { width: 100%; }
+  .cta.small .btn { height: 48px; }
+}
+@media (max-width: 380px) {
+  .say h2 { font-size: 25px; }
+}
+@media (max-width: 350px) {
+  .mark { gap: 8px; font-size: 20px; }
+  .topact { gap: 0; }
+  .top .btn { padding: 0 14px; font-size: 14.5px; }
+}
+/* a phone held sideways: nothing stays stuck to the top, and the headline leaves room for the buttons */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root { --stuck: 0px; }
+  .top { position: static; }
+  .hero { padding-block: 22px 26px; }
+  .hero h1 { font-size: clamp(38px, 12vh, 52px); }
+  .hero h1 br { display: none; }
+  .cta { margin-top: 16px; }
+  /* the clip is kept to the height of the screen; the box's own green fills in beside it, as in the clip */
+  .frame { max-height: calc(100vh - 84px); max-height: calc(100svh - 84px); }
+  .lost main { padding-block: 22px; }
+  .lost .end h1 { font-size: clamp(30px, 10vh, 44px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .first .dividers a, .map .wire { animation: none; }
+  .btn, .vbtn, .tabs a, .tabs a::before, .dividers a, .dividers svg, .qs summary::after { transition: none; }
+}
